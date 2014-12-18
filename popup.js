@@ -81,3 +81,50 @@ var kittenGenerator = {
 document.addEventListener('DOMContentLoaded', function () {
   kittenGenerator.requestKittens();
 });
+
+
+        
+function http(method, url, data, success, fail) {
+    if (typeof data == "object")
+        data = obj_to_urlstring(data); 
+    if (method == 'get') 
+        url += '?' + data;
+
+    var xmlhttp = new XMLHttpRequest;
+    xmlhttp.open((method || 'get'), url, true);
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlhttp.onreadystatechange = function() {
+        if(xmlhttp.readyState == 4 ){
+            if(xmlhttp.status == 200){
+                success(JSON.parse(xmlhttp.responseText)); }
+            else
+                fail(xmlhttp.responseText); }};
+        
+    xmlhttp.send(data ? data : null); }
+
+
+        
+function obj_to_urlstring(obj) {
+    var strs = [];
+
+    for (var key in obj) 
+        strs.push(key + "=" + encodeURIComponent(obj[key])); 
+
+    return strs.join("&"); }
+
+
+var token = 'xoxp-3247434278-3247434280-3247455580-0ced76';
+
+
+function testToken(token, next) {
+    http('get', 
+     'https://slack.com/api/auth.test', 
+     {token: token},
+     function(data) {
+         if (data.ok)
+             next(data);
+         else
+             next(false); }); }
+
+
+
